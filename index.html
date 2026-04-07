@@ -522,7 +522,41 @@ async function loadAll(){
   if(!GAS_URL) return;
   try{
     const[er,ir,rr]=await Promise.all([api('getEquipments'),api('getIssues'),api('getReceives')]);
-    equipments=er.data||[]; issueTransactions=ir.data||[]; receiveTransactions=rr.data||[];
+    async function loadAll(){
+  if(!GAS_URL) return;
+  try{
+    const [er, ir, rr] = await Promise.all([
+      api('getEquipments'),
+      api('getIssues'),
+      api('getReceives')
+    ]);
+
+    // ✅ map จาก GAS → UI
+    equipments = (er.data || []).map(it => ({
+      id: it.item_id,
+      code: it.item_id,
+      name: it.name,
+      unit: it.unit,
+      minQty: Number(it.min_alert) || 0,
+      img: it.image || '',
+      qty: 0
+    }));
+
+    issueTransactions = ir.data || [];
+    receiveTransactions = rr.data || [];
+
+    // ✅ คำนวณ stock
+    computeStock();
+
+    usingDemo = false;
+    setConn(true);
+    renderAll();
+
+  }catch(e){
+    setConn(false);
+    toast('เชื่อมต่อไม่ได้: '+e.message,'error');
+  }
+}issueTransactions=ir.data||[]; receiveTransactions=rr.data||[];
     usingDemo=false; setConn(true); renderAll();
   }catch(e){
     setConn(false); toast('เชื่อมต่อไม่ได้: '+e.message,'error');
@@ -747,7 +781,25 @@ function previewEquipImgUrl(url){
     `<img src="${url}" style="max-height:150px;border-radius:8px" onerror="this.style.display='none'">`;
 }
 async function reloadEquip(){
-  if(!usingDemo){const res=await api('getEquipments');equipments=res.data||[];}
+  if(!usingDemo){const res=await api('getEquipments');async function reloadEquip()
+  {
+  if(!usingDemo){
+    const res = await api('getEquipments');
+    equipments = (res.data || []).map(it => ({
+      id: it.item_id,
+      code: it.item_id,
+      name: it.name,
+      unit: it.unit,
+      minQty: Number(it.min_alert) || 0,
+      img: it.image || '',
+      qty: 0
+    }));
+  }
+  computeStock();
+  renderEquip();
+  renderStockReport();
+  checkLowStock();
+}
   renderEquip(); renderStockReport(); checkLowStock();
 }
 
@@ -1307,6 +1359,23 @@ function fmtDate(s){
   if(!s)return'-';
   const d=new Date(s+'T00:00:00');
   return `${d.getDate()} ${MONTHS[d.getMonth()].slice(0,3)} ${d.getFullYear()+543}`;
+}
+  function computeStock(){
+  equipments.forEach(e => e.qty = 0);
+
+  receiveTransactions.forEach(tx => {
+    (tx.items || []).forEach(it => {
+      const eq = equipments.find(e => e.code === it.code);
+      if(eq) eq.qty += Number(it.qty) || 0;
+    });
+  });
+
+  issueTransactions.forEach(tx => {
+    (tx.items || []).forEach(it => {
+      const eq = equipments.find(e => e.code === it.code);
+      if(eq) eq.qty -= Number(it.qty) || 0;
+    });
+  });
 }
 
 // ===== START =====
