@@ -1014,8 +1014,19 @@ function openProductPicker(target){
   src.forEach(it=>{pickerSelected[it.code]=it.qty;});
   document.getElementById('picker-search').value='';
   renderPicker(''); openModal('modal-product-picker');
-}
+
 function renderPicker(f){
+  const list = document.getElementById('picker-list');
+
+  // ✅ กันกรณี data ยังไม่พร้อม
+  if (!Array.isArray(equipments) || equipments.length === 0) {
+    list.innerHTML = `
+      <div class="empty-state" style="padding:20px">
+        <div class="empty-sub">ยังไม่มีอุปกรณ์</div>
+      </div>`;
+    return;
+  }
+
   const list=document.getElementById('picker-list');
   const filtered=equipments.filter(e=>e.name.toLowerCase().includes(f.toLowerCase())||e.code.toLowerCase().includes(f.toLowerCase()));
   if(!filtered.length){list.innerHTML='<div class="empty-state" style="padding:20px"><div class="empty-sub">ไม่พบอุปกรณ์</div></div>';return;}
