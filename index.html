@@ -4,84 +4,1313 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>equipment</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&amp;family=Sarabun:wght@300;400;500&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&family=Sarabun:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
-
 <style>
-/* ===== CSS เดิมของคุณ (ไม่เปลี่ยน) ===== */
-/* ผมไม่แก้ style ใด ๆ เพื่อความปลอดภัย */
+:root{--ig-white:#ffffff;--ig-bg:#fafafa;--ig-border:#dbdbdb;--ig-text:#262626;--ig-muted:#8e8e8e;--ig-blue:#0095f6;--ig-red:#ed4956;--ig-green:#58c322;--ig-orange:#fd9400;--ig-gradient:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);--ig-gradient-btn:linear-gradient(90deg,#833ab4,#fd1d1d,#fcb045);--radius:12px;--radius-sm:8px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Kanit','Sarabun',sans-serif;background:var(--ig-bg);color:var(--ig-text);min-height:100vh}
+.topbar{position:sticky;top:0;z-index:100;background:var(--ig-white);border-bottom:1px solid var(--ig-border);display:flex;align-items:center;justify-content:space-between;padding:10px 20px}
+.topbar-logo{font-size:22px;font-weight:600;background:var(--ig-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.5px}
+.topbar-icons{display:flex;gap:10px;align-items:center}
+.icon-btn{background:none;border:none;cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:background .2s;color:var(--ig-text);position:relative}
+.icon-btn:hover{background:var(--ig-bg)}
+.alert-badge{background:var(--ig-red);color:#fff;font-size:10px;font-weight:600;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;position:absolute;top:-2px;right:-2px}
+.conn-dot{width:8px;height:8px;border-radius:50%;background:#ccc;display:inline-block;margin-right:4px;transition:background .4s}
+.conn-dot.on{background:var(--ig-green)}
+.conn-label{font-size:11px;color:var(--ig-muted)}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--ig-white);border-top:1px solid var(--ig-border);display:flex;justify-content:space-around;padding:8px 0 max(8px,env(safe-area-inset-bottom))}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 8px;transition:all .2s;color:var(--ig-muted);font-size:10px;font-weight:400;white-space:nowrap;background:none;border:none;flex:1}
+.nav-item.active{color:var(--ig-text);font-weight:500}
+.nav-item svg{width:22px;height:22px}
+.main-content{max-width:640px;margin:0 auto;padding:16px 16px 90px}
+.page{display:none}.page.active{display:block}
+.card{background:var(--ig-white);border:1px solid var(--ig-border);border-radius:var(--radius);overflow:hidden;margin-bottom:14px}
+.card-header{padding:13px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--ig-border)}
+.card-title{font-size:14px;font-weight:600}
+.card-body{padding:16px}
+.product-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-bottom:16px}
+.product-tile{aspect-ratio:1;position:relative;cursor:pointer;background:#f0f0f0;overflow:hidden}
+.product-tile img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.product-tile:hover img{transform:scale(1.05)}
+.tile-overlay{position:absolute;inset:0;background:rgba(0,0,0,.32);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;color:#fff;font-size:12px;text-align:center;padding:8px}
+.product-tile:hover .tile-overlay,.product-tile:active .tile-overlay{opacity:1}
+.tile-low{position:absolute;top:5px;right:5px;background:var(--ig-red);color:#fff;font-size:9px;font-weight:600;padding:2px 5px;border-radius:10px}
+.tile-name{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.65));color:#fff;font-size:10px;padding:14px 6px 6px}
+.product-no-img{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#e8e8e8,#f5f5f5);color:var(--ig-muted);font-size:10px;text-align:center;padding:8px}
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:13px;font-weight:500;color:var(--ig-text);margin-bottom:6px}
+.form-control{width:100%;padding:10px 14px;border:1.5px solid var(--ig-border);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;color:var(--ig-text);background:var(--ig-white);outline:none;transition:border-color .2s}
+.form-control:focus{border-color:var(--ig-blue)}
+.form-control::placeholder{color:var(--ig-muted)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn{padding:10px 18px;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--ig-blue);color:#fff}.btn-primary:hover{background:#1877f2}
+.btn-gradient{background:var(--ig-gradient-btn);color:#fff}.btn-gradient:hover{opacity:.9}
+.btn-outline{background:transparent;color:var(--ig-blue);border:1.5px solid var(--ig-blue)}.btn-outline:hover{background:#e8f4fd}
+.btn-danger{background:transparent;color:var(--ig-red);border:1.5px solid var(--ig-red)}.btn-danger:hover{background:#ffeef0}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-block{width:100%;justify-content:center}
+.btn-icon{background:var(--ig-bg);border:1px solid var(--ig-border);border-radius:var(--radius-sm);padding:7px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:background .2s;color:var(--ig-text)}
+.btn-icon:hover{background:var(--ig-border)}
+.story-row{display:flex;gap:14px;overflow-x:auto;padding:12px 0 8px;-ms-overflow-style:none;scrollbar-width:none}
+.story-row::-webkit-scrollbar{display:none}
+.story-item{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;flex-shrink:0}
+.story-ring{width:60px;height:60px;border-radius:50%;padding:2.5px;background:var(--ig-gradient);display:flex;align-items:center;justify-content:center}
+.story-ring-inner{width:100%;height:100%;border-radius:50%;background:var(--ig-white);display:flex;align-items:center;justify-content:center;padding:3px;overflow:hidden}
+.story-ring-inner img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+.story-icon{width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,#e8e8e8,#f5f5f5);display:flex;align-items:center;justify-content:center;font-size:20px}
+.story-label{font-size:10px;color:var(--ig-text);text-align:center;max-width:60px;line-height:1.3}
+.story-count{font-size:10px;color:var(--ig-muted)}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--ig-border);border-radius:var(--radius);overflow:hidden;margin-bottom:16px}
+.stat-cell{background:var(--ig-white);padding:14px 8px;text-align:center}
+.stat-num{font-size:20px;font-weight:600}
+.stat-label{font-size:11px;color:var(--ig-muted);margin-top:2px}
+.tx-item{display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--ig-border);cursor:pointer;transition:background .15s}
+.tx-item:hover{background:var(--ig-bg)}.tx-item:last-child{border-bottom:none}
+.tx-avatar{width:42px;height:42px;border-radius:50%;overflow:hidden;flex-shrink:0;background:linear-gradient(135deg,#e8e8e8,#f5f5f5);display:flex;align-items:center;justify-content:center;font-size:18px}
+.tx-avatar img{width:100%;height:100%;object-fit:cover}
+.tx-info{flex:1;min-width:0}
+.tx-name{font-size:13px;font-weight:500}
+.tx-sub{font-size:11px;color:var(--ig-muted);margin-top:2px;line-height:1.4}
+.tx-actions{display:flex;gap:6px;margin-top:6px}
+.tx-amount{text-align:right;flex-shrink:0}
+.tx-qty{font-size:15px;font-weight:600}.tx-qty.out{color:var(--ig-red)}.tx-qty.in{color:var(--ig-green)}
+.tx-date{font-size:11px;color:var(--ig-muted);margin-top:2px}
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500}
+.badge-danger{background:#ffeef0;color:var(--ig-red)}
+.badge-success{background:#eafaf0;color:var(--ig-green)}
+.badge-warning{background:#fff8e6;color:var(--ig-orange)}
+.badge-info{background:#e8f4fd;color:var(--ig-blue)}
+.modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center}
+.modal-overlay.hidden{display:none}
+.modal-sheet{background:var(--ig-white);border-radius:20px 20px 0 0;width:100%;max-width:640px;max-height:92vh;overflow-y:auto;padding:0 0 30px;animation:slideUp .3s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:36px;height:4px;background:var(--ig-border);border-radius:2px;margin:10px auto 0}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--ig-border);position:sticky;top:0;background:white;z-index:1}
+.modal-title{font-size:16px;font-weight:600}
+.modal-close{background:none;border:none;cursor:pointer;font-size:22px;color:var(--ig-muted);line-height:1}
+.modal-body{padding:16px}
+.img-upload-area{border:2px dashed var(--ig-border);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;transition:border-color .2s;background:var(--ig-bg)}
+.img-upload-area:hover{border-color:var(--ig-blue)}
+.img-upload-area img{max-width:100%;max-height:200px;border-radius:var(--radius-sm);margin-top:10px}
+.detail-table{width:100%;border-collapse:collapse;font-size:13px}
+.detail-table td{padding:10px 12px;border-bottom:1px solid var(--ig-border);vertical-align:middle}
+.detail-table tr:last-child td{border-bottom:none}
+.chart-container{position:relative;height:200px;margin:8px 0}
+.filter-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;-ms-overflow-style:none;scrollbar-width:none}
+.filter-row::-webkit-scrollbar{display:none}
+.filter-chip{flex-shrink:0;padding:6px 14px;border:1.5px solid var(--ig-border);border-radius:20px;font-family:inherit;font-size:13px;background:var(--ig-white);color:var(--ig-text);cursor:pointer;transition:all .2s}
+.filter-chip.active{background:var(--ig-text);color:var(--ig-white);border-color:var(--ig-text)}
+.product-card{display:flex;gap:14px;align-items:center;padding:12px;background:var(--ig-white);border:1px solid var(--ig-border);border-radius:var(--radius);margin-bottom:10px;cursor:pointer;transition:all .2s}
+.product-card:hover,.product-card.selected{border-color:var(--ig-blue);background:#f0f8ff}
+.product-card-img{width:56px;height:56px;border-radius:var(--radius-sm);flex-shrink:0;background:var(--ig-bg);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.product-card-img img{width:100%;height:100%;object-fit:cover;border-radius:var(--radius-sm)}
+.product-card-info{flex:1;min-width:0}
+.product-card-name{font-size:14px;font-weight:500}
+.product-card-code{font-size:11px;color:var(--ig-muted);margin-top:2px}
+.checkout-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--ig-border)}
+.checkout-item:last-child{border-bottom:none}
+.checkout-item-name{flex:1;font-size:14px}
+.checkout-item-qty{display:flex;align-items:center;gap:6px}
+.qty-btn{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--ig-border);background:none;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s;color:var(--ig-text)}
+.qty-btn:hover{border-color:var(--ig-blue);color:var(--ig-blue)}
+.qty-num{font-size:14px;font-weight:500;min-width:22px;text-align:center}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.section-title{font-size:16px;font-weight:600}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#toast-container{position:fixed;bottom:86px;left:50%;transform:translateX(-50%);z-index:999;display:flex;flex-direction:column;gap:8px;width:90%;max-width:360px;pointer-events:none}
+.toast{background:rgba(0,0,0,.85);color:#fff;padding:12px 16px;border-radius:var(--radius);font-size:14px;text-align:center;animation:fadeIn .3s ease}
+.toast.success{background:rgba(88,195,34,.92)}.toast.error{background:rgba(237,73,86,.92)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.doc-number-display{background:linear-gradient(135deg,#f8f9fa,#e8e8e8);border:1px solid var(--ig-border);border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;color:var(--ig-muted);letter-spacing:.5px;margin-bottom:14px}
+.doc-number-display span{font-weight:600;color:var(--ig-blue);font-size:15px}
+.empty-state{text-align:center;padding:36px 20px;color:var(--ig-muted)}
+.empty-icon{font-size:44px;margin-bottom:10px}
+.empty-text{font-size:15px;font-weight:500;color:var(--ig-text);margin-bottom:5px}
+.empty-sub{font-size:13px}
+.month-nav{display:flex;align-items:center;justify-content:space-between;background:var(--ig-white);border:1px solid var(--ig-border);border-radius:var(--radius-sm);padding:8px 14px;margin-bottom:12px}
+.month-nav-btn{background:none;border:none;cursor:pointer;font-size:20px;color:var(--ig-muted);padding:4px}
+.month-nav-label{font-size:15px;font-weight:500}
+.progress-bar{background:#f0f0f0;border-radius:4px;height:6px;overflow:hidden;margin:6px 0 4px}
+.progress-fill{height:100%;border-radius:4px;transition:width .5s}
+.stock-card{display:flex;gap:12px;align-items:center;padding:14px 16px;background:var(--ig-white);border:1px solid var(--ig-border);border-radius:var(--radius);margin-bottom:10px}
+.stock-card-img{width:52px;height:52px;border-radius:var(--radius-sm);background:var(--ig-bg);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+.stock-card-img img{width:100%;height:100%;object-fit:cover;border-radius:var(--radius-sm)}
+#qr-video{width:100%;border-radius:var(--radius);max-height:260px;object-fit:cover}
+.qr-overlay{position:relative}
+.qr-frame{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:160px;height:160px;border:3px solid var(--ig-blue);border-radius:16px;pointer-events:none}
+.config-note{background:#f0f8ff;border-radius:var(--radius-sm);border:1px solid #bee3f8;padding:12px 14px;font-size:12px;color:#0c5460;line-height:1.7;margin-top:14px}
 </style>
 </head>
-
 <body>
 
 <header class="topbar">
   <div class="topbar-logo">equipment</div>
   <div class="topbar-icons">
-    <span class="conn-label">
-      <span class="conn-dot" id="conn-dot"></span>
-      <span id="conn-text">ออฟไลน์</span>
-    </span>
-    <button class="icon-btn" onclick="showLowStockAlert()">🔔
+    <span class="conn-label"><span class="conn-dot" id="conn-dot"></span><span id="conn-text">ออฟไลน์</span></span>
+    <button class="icon-btn" onclick="showLowStockAlert()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
       <span class="alert-badge" id="alert-badge" style="display:none">!</span>
     </button>
-    <button class="icon-btn" onclick="openModal('modal-config')">⚙️</button>
+    <button class="icon-btn" onclick="openModal('modal-config')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
   </div>
 </header>
 
 <main class="main-content">
+
+  <!-- PAGE: Equipment -->
   <div class="page active" id="page-equipment">
+    <div class="story-row" id="category-stories"></div>
     <div class="stats-row">
-      <div class="stat-cell"><div class="stat-num" id="stat-total">0</div><div class="stat-label">ทั้งหมด</div></div>
-      <div class="stat-cell"><div class="stat-num" id="stat-low">0</div><div class="stat-label">ใกล้หมด</div></div>
-      <div class="stat-cell"><div class="stat-num" id="stat-ok">0</div><div class="stat-label">ปกติ</div></div>
+      <div class="stat-cell"><div class="stat-num" id="stat-total">0</div><div class="stat-label">รายการทั้งหมด</div></div>
+      <div class="stat-cell"><div class="stat-num" id="stat-low" style="color:var(--ig-red)">0</div><div class="stat-label">ใกล้หมด</div></div>
+      <div class="stat-cell"><div class="stat-num" id="stat-ok" style="color:var(--ig-green)">0</div><div class="stat-label">ปกติ</div></div>
     </div>
-    <button class="btn btn-gradient btn-sm" onclick="openAddEquip()">➕ เพิ่มอุปกรณ์</button>
+    <div class="section-header">
+      <span class="section-title">อุปกรณ์สำนักงาน</span>
+      <button class="btn btn-gradient btn-sm" onclick="openAddEquip()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        เพิ่มอุปกรณ์
+      </button>
+    </div>
     <div class="product-grid" id="product-grid"></div>
     <div class="empty-state" id="equipment-empty" style="display:none">
-      <div class="empty-text">ยังไม่มีอุปกรณ์</div>
+      <div class="empty-icon">📦</div><div class="empty-text">ยังไม่มีอุปกรณ์สำนักงาน</div>
+      <div class="empty-sub">กดปุ่ม "เพิ่มอุปกรณ์" เพื่อเริ่มต้น</div>
     </div>
   </div>
+
+  <!-- PAGE: Issue -->
+  <div class="page" id="page-issue">
+    <div class="section-header">
+      <span class="section-title">เบิก-จ่าย</span>
+      <button class="btn btn-gradient btn-sm" onclick="openCreateIssue()">+ สร้างรายการ</button>
+    </div>
+    <div id="issue-list-wrap"></div>
+  </div>
+
+  <!-- PAGE: Receive -->
+  <div class="page" id="page-receive">
+    <div class="section-header">
+      <span class="section-title">รับเข้า</span>
+      <button class="btn btn-gradient btn-sm" onclick="openCreateReceive()">+ สร้างรายการ</button>
+    </div>
+    <div id="receive-list-wrap"></div>
+  </div>
+
+  <!-- PAGE: Stock -->
+  <div class="page" id="page-stock">
+    <div class="section-header">
+      <span class="section-title">สต๊อกคงเหลือ</span>
+      <button class="btn-icon" onclick="exportStock()" title="Download">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </button>
+    </div>
+    <div class="filter-row">
+      <button class="filter-chip active" onclick="filterStock('all',this)">ทั้งหมด</button>
+      <button class="filter-chip" onclick="filterStock('desc',this)">มาก → น้อย</button>
+      <button class="filter-chip" onclick="filterStock('asc',this)">น้อย → มาก</button>
+      <button class="filter-chip" onclick="filterStock('low',this)">⚠️ ใกล้หมด</button>
+    </div>
+    <div id="stock-list"></div>
+  </div>
+
+  <!-- PAGE: Issue Report -->
+  <div class="page" id="page-issue-report">
+    <div class="section-header">
+      <span class="section-title">รายงานเบิก-จ่าย</span>
+      <button class="btn-icon" onclick="exportIssueReport()" title="Download">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </button>
+    </div>
+    <div class="month-nav">
+      <button class="month-nav-btn" onclick="changeMonth('issue',-1)">‹</button>
+      <span class="month-nav-label" id="issue-report-month"></span>
+      <button class="month-nav-btn" onclick="changeMonth('issue',1)">›</button>
+    </div>
+    <div class="stats-row" style="margin-bottom:12px">
+      <div class="stat-cell"><div class="stat-num" id="ir-times">0</div><div class="stat-label">ครั้ง</div></div>
+      <div class="stat-cell"><div class="stat-num" id="ir-items">0</div><div class="stat-label">รายการ</div></div>
+      <div class="stat-cell"><div class="stat-num" id="ir-units">0</div><div class="stat-label">ชิ้น</div></div>
+    </div>
+    <div class="card"><div class="card-header"><span class="card-title">แนวโน้มรายวัน</span></div><div class="card-body"><div class="chart-container"><canvas id="issue-chart"></canvas></div></div></div>
+    <div class="card"><div class="card-header"><span class="card-title">รายการเบิก</span></div><div id="issue-report-list" style="padding:0"></div></div>
+  </div>
+
+  <!-- PAGE: Receive Report -->
+  <div class="page" id="page-receive-report">
+    <div class="section-header">
+      <span class="section-title">รายงานรับเข้า</span>
+      <button class="btn-icon" onclick="exportReceiveReport()" title="Download">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </button>
+    </div>
+    <div class="month-nav">
+      <button class="month-nav-btn" onclick="changeMonth('receive',-1)">‹</button>
+      <span class="month-nav-label" id="receive-report-month"></span>
+      <button class="month-nav-btn" onclick="changeMonth('receive',1)">›</button>
+    </div>
+    <div class="stats-row" style="margin-bottom:12px">
+      <div class="stat-cell"><div class="stat-num" id="rr-times">0</div><div class="stat-label">ครั้ง</div></div>
+      <div class="stat-cell"><div class="stat-num" id="rr-items">0</div><div class="stat-label">รายการ</div></div>
+      <div class="stat-cell"><div class="stat-num" id="rr-units">0</div><div class="stat-label">ชิ้น</div></div>
+    </div>
+    <div class="card"><div class="card-header"><span class="card-title">แนวโน้มรายวัน</span></div><div class="card-body"><div class="chart-container"><canvas id="receive-chart"></canvas></div></div></div>
+    <div class="card"><div class="card-header"><span class="card-title">รายการรับเข้า</span></div><div id="receive-report-list" style="padding:0"></div></div>
+  </div>
+
 </main>
 
-<div class="modal-overlay hidden" id="modal-config">
+<nav class="bottom-nav">
+  <button class="nav-item active" onclick="navigate('equipment',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>หน้าหลัก
+  </button>
+  <button class="nav-item" onclick="navigate('issue',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>เบิก-จ่าย
+  </button>
+  <button class="nav-item" onclick="navigate('receive',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>รับเข้า
+  </button>
+  <button class="nav-item" onclick="navigate('stock',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>สต๊อก
+  </button>
+  <button class="nav-item" onclick="openModal('modal-reports-tab')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>รายงาน
+  </button>
+</nav>
+
+<!-- Add/Edit Equipment -->
+<div class="modal-overlay hidden" id="modal-add-equipment">
   <div class="modal-sheet">
+    <div class="modal-handle"></div>
     <div class="modal-header">
-      <span class="modal-title">⚙ ตั้งค่าการเชื่อมต่อ</span>
-      <button class="modal-close" onclick="closeModal('modal-config')">×</button>
+      <span class="modal-title" id="modal-equip-title">เพิ่มอุปกรณ์สำนักงาน</span>
+      <button class="modal-close" onclick="closeModal('modal-add-equipment')">×</button>
     </div>
     <div class="modal-body">
-      <input type="url" id="config-gas-url" class="form-control" placeholder="https://script.google.com/macros/s/...">
-      <button class="btn btn-primary btn-block" onclick="saveConfig()">บันทึกและเชื่อมต่อ</button>
+      <input type="hidden" id="equip-edit-id">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">รหัสอุปกรณ์ *</label><input type="text" class="form-control" id="equip-code" placeholder="EQ001"></div>
+        <div class="form-group"><label class="form-label">ชื่ออุปกรณ์ *</label><input type="text" class="form-control" id="equip-name" placeholder="กระดาษ A4"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">รูปภาพ</label>
+        <div class="img-upload-area" onclick="document.getElementById('equip-img-input').click()">
+          <div id="equip-img-preview">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="1.5" style="margin:0 auto;display:block"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <p style="font-size:13px;color:#bbb;margin-top:8px">แตะเพื่อเลือกรูป</p>
+          </div>
+        </div>
+        <input type="file" id="equip-img-input" accept="image/*" style="display:none" onchange="previewEquipImg(this)">
+        <input type="text" class="form-control" id="equip-img-url" placeholder="หรือวาง URL รูปภาพ" style="margin-top:8px" oninput="previewEquipImgUrl(this.value)">
+        <input type="hidden" id="equip-img-data">
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">หน่วยนับ *</label><input type="text" class="form-control" id="equip-unit" placeholder="ชิ้น, รีม, กล่อง"></div>
+        <div class="form-group"><label class="form-label">จำนวนเตือนขั้นต่ำ</label><input type="number" class="form-control" id="equip-min-qty" value="5" min="0"></div>
+      </div>
+      <button class="btn btn-gradient btn-block" onclick="saveEquipment()" id="save-equip-btn">บันทึก</button>
     </div>
+  </div>
+</div>
+
+<!-- Create Issue -->
+<div class="modal-overlay hidden" id="modal-create-issue">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <span class="modal-title" id="modal-issue-title">สร้างรายการเบิก</span>
+      <button class="modal-close" onclick="closeModal('modal-create-issue')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="issue-edit-id">
+      <div class="doc-number-display">เลขที่: <span id="issue-doc-num">-</span></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">วันที่เบิก</label><input type="date" class="form-control" id="issue-date"></div>
+        <div class="form-group"><label class="form-label">ชื่อผู้เบิก *</label><input type="text" class="form-control" id="issue-requester" placeholder="ชื่อ-นามสกุล"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">หน่วยงาน *</label><input type="text" class="form-control" id="issue-dept" placeholder="แผนก / ฝ่าย"></div>
+        <div class="form-group"><label class="form-label">หมายเหตุ</label><input type="text" class="form-control" id="issue-note" placeholder="(ถ้ามี)"></div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <span style="font-size:14px;font-weight:600">รายการอุปกรณ์</span>
+        <button class="btn btn-outline btn-sm" onclick="openProductPicker('issue')">+ เลือกอุปกรณ์</button>
+      </div>
+      <div id="issue-items-list"><div class="empty-state" style="padding:20px"><div class="empty-sub">กดเลือกอุปกรณ์</div></div></div>
+      <button class="btn btn-gradient btn-block" onclick="submitIssue()" id="submit-issue-btn" style="margin-top:14px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        บันทึกการเบิก
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Create Receive -->
+<div class="modal-overlay hidden" id="modal-create-receive">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <span class="modal-title" id="modal-receive-title">สร้างรายการรับเข้า</span>
+      <button class="modal-close" onclick="closeModal('modal-create-receive')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="receive-edit-id">
+      <div class="doc-number-display">เลขที่: <span id="receive-doc-num">-</span></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">วันที่รับเข้า</label><input type="date" class="form-control" id="receive-date"></div>
+        <div class="form-group"><label class="form-label">หมายเหตุ</label><input type="text" class="form-control" id="receive-note" placeholder="(ถ้ามี)"></div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <span style="font-size:14px;font-weight:600">รายการอุปกรณ์</span>
+        <button class="btn btn-outline btn-sm" onclick="openProductPicker('receive')">+ เลือกอุปกรณ์</button>
+      </div>
+      <div id="receive-items-list"><div class="empty-state" style="padding:20px"><div class="empty-sub">กดเลือกอุปกรณ์</div></div></div>
+      <button class="btn btn-gradient btn-block" onclick="submitReceive()" id="submit-receive-btn" style="margin-top:14px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        บันทึกการรับเข้า
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Product Picker -->
+<div class="modal-overlay hidden" id="modal-product-picker">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <span class="modal-title">เลือกอุปกรณ์สำนักงาน</span>
+      <button class="modal-close" onclick="closeModal('modal-product-picker')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="text" class="form-control" placeholder="🔍 ค้นหา..." id="picker-search" oninput="filterPicker(this.value)" style="margin-bottom:12px">
+      <div id="picker-list"></div>
+      <button class="btn btn-primary btn-block" onclick="confirmPicker()" style="margin-top:12px">ยืนยัน</button>
+    </div>
+  </div>
+</div>
+
+<!-- Equipment Detail -->
+<div class="modal-overlay hidden" id="modal-equip-detail">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <span class="modal-title" id="detail-equip-name">รายละเอียด</span>
+      <button class="modal-close" onclick="closeModal('modal-equip-detail')">×</button>
+    </div>
+    <div class="modal-body" id="equip-detail-body"></div>
+  </div>
+</div>
+
+<!-- QR Scanner -->
+<div class="modal-overlay hidden" id="modal-qr">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <span class="modal-title">สแกน / พิมพ์รหัส</span>
+      <button class="modal-close" onclick="closeQR()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="qr-overlay"><video id="qr-video" playsinline autoplay></video><div class="qr-frame"></div></div>
+      <p style="font-size:13px;color:var(--ig-muted);text-align:center;margin-top:10px">หรือพิมพ์รหัสอุปกรณ์</p>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <input type="text" class="form-control" id="qr-manual-input" placeholder="รหัสอุปกรณ์" style="flex:1">
+        <button class="btn btn-primary" onclick="manualQRInput()">ตกลง</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Reports tab -->
+<div class="modal-overlay hidden" id="modal-reports-tab">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><span class="modal-title">เลือกรายงาน</span><button class="modal-close" onclick="closeModal('modal-reports-tab')">×</button></div>
+    <div class="modal-body">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button class="btn btn-outline btn-block" onclick="goReport('issue-report')">📤 รายงานการเบิก-จ่าย</button>
+        <button class="btn btn-outline btn-block" onclick="goReport('receive-report')">📥 รายงานการรับเข้า</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Config -->
+<div class="modal-overlay hidden" id="modal-config">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><span class="modal-title">⚙ ตั้งค่าการเชื่อมต่อ</span><button class="modal-close" onclick="closeModal('modal-config')">×</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Google Apps Script URL</label><input type="url" class="form-control" id="config-gas-url" placeholder="https://script.google.com/macros/s/..."></div>
+      <button class="btn btn-primary btn-block" onclick="saveConfig()">บันทึกและเชื่อมต่อ</button>
+      <div class="config-note">
+        <strong>วิธีตั้งค่า:</strong><br>
+        1. เปิด Google Sheets ใหม่ → Extensions → Apps Script<br>
+        2. วางโค้ดจากไฟล์ <strong>Code.gs</strong><br>
+        3. Deploy → New deployment<br>
+        4. Execute as: <strong>Me</strong> · Who has access: <strong>Anyone</strong><br>
+        5. คัดลอก URL มาวางด้านบน<br><br>
+        💡 ใช้งานออฟไลน์ได้ด้วย demo data ก่อนเชื่อมต่อ
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Doc Detail -->
+<div class="modal-overlay hidden" id="modal-doc-detail">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><span class="modal-title" id="doc-detail-title">รายละเอียดเอกสาร</span><button class="modal-close" onclick="closeModal('modal-doc-detail')">×</button></div>
+    <div class="modal-body" id="doc-detail-body"></div>
   </div>
 </div>
 
 <div id="toast-container"></div>
 
 <script>
-/* ================= CONFIG ================= */
+// ===== CONFIG =====
 let GAS_URL = localStorage.getItem('eq_gas_url') || '';
 
-/* ================= STATE ================= */
-let equipments = [];
-let issueTransactions = [];
-let receiveTransactions = [];
-let usingDemo = false;
+// ===== STATE =====
+let equipments=[], issueTransactions=[], receiveTransactions=[];
+let issueTxItems=[], receiveTxItems=[];
+let pickerTarget=null, pickerSelected={};
+let issueReportMonth=new Date(), receiveReportMonth=new Date();
+let issueChart=null, receiveChart=null;
+let editingIssueId=null, editingReceiveId=null;
+let qrStream=null, qrTarget=null;
+let usingDemo=false;
 
-/* ================= INIT ================= */
-async function init() {
-  document.getElementById('config-gas-url').value = GAS_URL;
-  renderEquip();
-  if (GAS_URL) loadAll();
+// ===== DEMO DATA =====
+const DEMO_EQ=[
+  {id:'1',code:'EQ001',name:'กระดาษ A4',qty:50,unit:'รีม',minQty:10,img:''},
+  {id:'2',code:'EQ002',name:'ปากกาลูกลื่น',qty:8,unit:'ด้าม',minQty:20,img:''},
+  {id:'3',code:'EQ003',name:'แฟ้มเอกสาร',qty:30,unit:'อัน',minQty:5,img:''},
+  {id:'4',code:'EQ004',name:'คลิปหนีบ',qty:3,unit:'กล่อง',minQty:5,img:''},
+  {id:'5',code:'EQ005',name:'กาวแท่ง',qty:15,unit:'แท่ง',minQty:5,img:''},
+  {id:'6',code:'EQ006',name:'ซองเอกสาร A4',qty:100,unit:'ซอง',minQty:20,img:''},
+];
+const DEMO_ISS=[
+  {id:'i1',docNum:'IS-250115-001',date:'2025-01-15',requester:'สมชาย ใจดี',dept:'ฝ่ายบุคคล',note:'',items:[{code:'EQ001',name:'กระดาษ A4',qty:5,unit:'รีม'},{code:'EQ002',name:'ปากกาลูกลื่น',qty:10,unit:'ด้าม'}]},
+  {id:'i2',docNum:'IS-250120-001',date:'2025-01-20',requester:'สมหญิง รักงาน',dept:'ฝ่ายการเงิน',note:'',items:[{code:'EQ003',name:'แฟ้มเอกสาร',qty:5,unit:'อัน'}]},
+];
+const DEMO_REC=[
+  {id:'r1',docNum:'RC-250110-001',date:'2025-01-10',note:'สั่งซื้อรอบ ม.ค.',items:[{code:'EQ001',name:'กระดาษ A4',qty:50,unit:'รีม'},{code:'EQ002',name:'ปากกาลูกลื่น',qty:30,unit:'ด้าม'}]},
+  {id:'r2',docNum:'RC-250205-001',date:'2025-02-05',note:'',items:[{code:'EQ004',name:'คลิปหนีบ',qty:10,unit:'กล่อง'}]},
+];
+
+// ===== INIT =====
+async function init(){
+  document.getElementById('config-gas-url').value=GAS_URL;
+  document.getElementById('issue-date').value=today();
+  document.getElementById('receive-date').value=today();
+  equipments=JSON.parse(JSON.stringify(DEMO_EQ));
+  issueTransactions=JSON.parse(JSON.stringify(DEMO_ISS));
+  receiveTransactions=JSON.parse(JSON.stringify(DEMO_REC));
+  usingDemo=true; setConn(false);
+  renderAll();
+  loadAll();
 }
 
-function setConn(ok) {
-  document.getElementById('conn-dot').className = 'conn-dot' + (ok ? ' on' : '');
-  document.getElementById('conn-text').textContent = ok ? 'เชื่อมต่อแล้ว' : 'ออฟไลน์';
+function today(){return new Date().toISOString().split('T')[0];}
+
+async function loadAll(){
+  if(!GAS_URL) return;
+  try{
+    const[er,ir,rr]=await Promise.all([api('getEquipments'),api('getIssues'),api('getReceives')]);
+    equipments=er.data||[]; issueTransactions=ir.data||[]; receiveTransactions=rr.data||[];
+    usingDemo=false; setConn(true); renderAll();
+  }catch(e){
+    setConn(false); toast('เชื่อมต่อไม่ได้: '+e.message,'error');
+  }
 }
 
-/* ================= API ================= */
-async function api(action, data = {}) {
-  const payload = encodeURIComponent(JSON.stringify({ action, ...data }));
+function setConn(ok){
+  document.getElementById('conn-dot').className='conn-dot'+(ok?' on':'');
+  document.getElementById('conn-text').textContent=ok?'เชื่อมต่อแล้ว':'ออฟไลน์';
+}
+
+function renderAll(){
+  renderEquip(); renderIssueList(); renderReceiveList();
+  renderStockReport(); renderIssueReport(); renderReceiveReport(); checkLowStock();
+}
+
+async function api(action,data={},ms=25000){
+  // Google Apps Script iframe mode
+  if(typeof google!=='undefined'&&google.script&&google.script.run){
+    return new Promise((resolve,reject)=>{
+      const t=setTimeout(()=>reject(new Error('timeout')),ms);
+      google.script.run
+        .withSuccessHandler(jsonStr=>{
+          clearTimeout(t);
+          try{ resolve(typeof jsonStr==='string'?JSON.parse(jsonStr):jsonStr); }
+          catch(e){ reject(e); }
+        })
+        .withFailureHandler(err=>{ clearTimeout(t); reject(new Error(err.message||err)); })
+        .handleRequest(JSON.stringify({action,...data}));
+    });
+  }
+  // ใช้ GET + payload เพื่อหลีกเลี่ยง CORS preflight ของ GAS
+  const payload=encodeURIComponent(JSON.stringify({action,...data}));
+  const controller=new AbortController();
+  const t=setTimeout(()=>controller.abort(),ms);
+  try{
+    const r=await fetch(GAS_URL+'?payload='+payload,{
+      method:'GET',
+      signal:controller.signal
+    });
+    clearTimeout(t);
+    const text=await r.text();
+    return JSON.parse(text);
+  }catch(e){
+    clearTimeout(t);
+    throw e;
+  }
+}
+
+// ===== CONFIG =====
+function saveConfig(){
+  GAS_URL=document.getElementById('config-gas-url').value.trim();
+  localStorage.setItem('eq_gas_url',GAS_URL);
+  closeModal('modal-config'); toast('บันทึกแล้ว กำลังเชื่อมต่อ...');
+  loadAll().then(()=>renderAll());
+}
+
+// ===== EQUIPMENT =====
+function renderEquip(){
+  const grid=document.getElementById('product-grid');
+  const empty=document.getElementById('equipment-empty');
+  const total=equipments.length, low=equipments.filter(e=>e.qty<=e.minQty).length;
+  document.getElementById('stat-total').textContent=total;
+  document.getElementById('stat-low').textContent=low;
+  document.getElementById('stat-ok').textContent=total-low;
+  if(!total){grid.style.display='none';empty.style.display='block';}
+  else{grid.style.display='grid';empty.style.display='none';}
+  grid.innerHTML=equipments.map(eq=>`
+    <div class="product-tile" onclick="showEquipDetail('${eq.id}')">
+      ${eq.img?`<img src="${eq.img}" alt="${eq.name}" onerror="this.style.display='none'">`:
+        `<div class="product-no-img"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><div style="font-size:9px;color:#aaa;margin-top:3px">${eq.name}</div></div>`}
+      ${eq.qty<=eq.minQty?`<div class="tile-low">ใกล้หมด</div>`:''}
+      <div class="tile-name">${eq.name}</div>
+      <div class="tile-overlay"><div style="font-weight:700;font-size:15px">${eq.qty}</div><div style="font-size:11px">${eq.unit}</div><div style="font-size:10px;opacity:.8">${eq.code}</div></div>
+    </div>`).join('');
+  renderStories();
+}
+
+function renderStories(){
+  const s=document.getElementById('category-stories');
+  const low=equipments.filter(e=>e.qty<=e.minQty);
+  const items=[{label:'ทั้งหมด',count:equipments.length,icon:'📦'},{label:'ใกล้หมด',count:low.length,icon:'⚠️'},...equipments.slice(0,5).map(e=>({label:e.name.length>6?e.name.slice(0,6)+'…':e.name,count:`${e.qty} ${e.unit}`,img:e.img}))];
+  s.innerHTML=items.map(x=>`<div class="story-item"><div class="story-ring"><div class="story-ring-inner">${x.img?`<img src="${x.img}" alt="">`:`<div class="story-icon">${x.icon||'📦'}</div>`}</div></div><div class="story-label">${x.label}</div><div class="story-count">${x.count}</div></div>`).join('');
+}
+
+function showEquipDetail(id){
+  const eq=equipments.find(e=>e.id===id);if(!eq)return;
+  document.getElementById('detail-equip-name').textContent=eq.name;
+  const isLow=eq.qty<=eq.minQty;
+  document.getElementById('equip-detail-body').innerHTML=`
+    ${eq.img?`<img src="${eq.img}" style="width:100%;max-height:200px;object-fit:cover;border-radius:12px;margin-bottom:14px">`:''}
+    <table class="detail-table">
+      <tr><td style="color:var(--ig-muted);width:90px">รหัส</td><td style="font-weight:500">${eq.code}</td></tr>
+      <tr><td style="color:var(--ig-muted)">ชื่อ</td><td>${eq.name}</td></tr>
+      <tr><td style="color:var(--ig-muted)">คงเหลือ</td><td><span style="font-size:22px;font-weight:700;color:${isLow?'var(--ig-red)':'var(--ig-green)'}">${eq.qty}</span> <span style="color:var(--ig-muted)">${eq.unit}</span></td></tr>
+      <tr><td style="color:var(--ig-muted)">สถานะ</td><td>${isLow?'<span class="badge badge-danger">⚠️ ใกล้หมด</span>':'<span class="badge badge-success">✓ ปกติ</span>'}</td></tr>
+      <tr><td style="color:var(--ig-muted)">ขั้นต่ำ</td><td>${eq.minQty} ${eq.unit}</td></tr>
+    </table>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn btn-outline btn-block" onclick="editEquipment('${eq.id}')">✏️ แก้ไข</button>
+      <button class="btn btn-danger btn-block" onclick="deleteEquipment('${eq.id}')">🗑 ลบ</button>
+    </div>`;
+  openModal('modal-equip-detail');
+}
+
+function openAddEquip(){
+  document.getElementById('modal-equip-title').textContent='เพิ่มอุปกรณ์สำนักงาน';
+  ['equip-edit-id','equip-code','equip-name','equip-unit','equip-img-data','equip-img-url'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('equip-min-qty').value=5;
+  resetImgPreview();
+  openModal('modal-add-equipment');
+}
+
+function editEquipment(id){
+  const eq=equipments.find(e=>e.id===id);if(!eq)return;
+  closeModal('modal-equip-detail');
+  document.getElementById('modal-equip-title').textContent='แก้ไขอุปกรณ์';
+  document.getElementById('equip-edit-id').value=eq.id;
+  document.getElementById('equip-code').value=eq.code;
+  document.getElementById('equip-name').value=eq.name;
+  document.getElementById('equip-unit').value=eq.unit;
+  document.getElementById('equip-min-qty').value=eq.minQty;
+  document.getElementById('equip-img-data').value=eq.img||'';
+  document.getElementById('equip-img-url').value=(eq.img&&!eq.img.startsWith('data:'))?eq.img:'';
+  if(eq.img) document.getElementById('equip-img-preview').innerHTML=`<img src="${eq.img}" style="max-height:150px;border-radius:8px">`;
+  else resetImgPreview();
+  openModal('modal-add-equipment');
+}
+
+async function deleteEquipment(id){
+  if(!confirm('ลบอุปกรณ์นี้?'))return;
+  if(!usingDemo){await api('deleteEquipment',{id});}
+  else{const i=equipments.findIndex(e=>e.id===id);if(i>=0)equipments.splice(i,1);}
+  closeModal('modal-equip-detail');
+  await reloadEquip(); toast('ลบแล้ว','error');
+}
+
+async function saveEquipment(){
+  const code=document.getElementById('equip-code').value.trim();
+  const name=document.getElementById('equip-name').value.trim();
+  const unit=document.getElementById('equip-unit').value.trim();
+  const minQty=parseInt(document.getElementById('equip-min-qty').value)||0;
+  let img=document.getElementById('equip-img-data').value;
+  const editId=document.getElementById('equip-edit-id').value;
+  if(!code||!name||!unit){toast('กรุณากรอกข้อมูลที่จำเป็น','error');return;}
+  const btn=document.getElementById('save-equip-btn');
+  btn.innerHTML='<span class="spinner"></span>'; btn.disabled=true;
+
+  // ถ้ารูปเป็น base64 (เลือกจากไฟล์) ให้อัปโหลดไป Google Drive ก่อน
+  if(!usingDemo && img && img.startsWith('data:')){
+    try{
+      btn.innerHTML='<span class="spinner"></span> กำลังอัปโหลดรูป...';
+      const upRes=await api('uploadImage',{
+        imageData: img,
+        fileName: `equip_${code}_${Date.now()}.jpg`
+      });
+      if(upRes.ok && upRes.url){
+        img=upRes.url; // เปลี่ยนเป็น Drive URL
+      }else{
+        toast('อัปโหลดรูปไม่สำเร็จ: '+(upRes.error||''),'error');
+        btn.innerHTML='บันทึก';btn.disabled=false;return;
+      }
+    }catch(err){
+      toast('อัปโหลดรูปล้มเหลว','error');
+      btn.innerHTML='บันทึก';btn.disabled=false;return;
+    }
+  }
+
+  btn.innerHTML='<span class="spinner"></span> กำลังบันทึก...';
+  const data={code,name,unit,minQty,img};
+  if(editId)data.id=editId;
+  if(!usingDemo){
+    const res=await api('saveEquipment',data);
+    if(res.success===false){toast('เกิดข้อผิดพลาด','error');btn.innerHTML='บันทึก';btn.disabled=false;return;}
+  }else{
+    if(editId){const i=equipments.findIndex(e=>e.id===editId);if(i>=0)equipments[i]={...equipments[i],...data};}
+    else equipments.push({...data,id:Date.now().toString(),qty:0});
+  }
+  await reloadEquip(); closeModal('modal-add-equipment');
+  btn.innerHTML='บันทึก';btn.disabled=false; toast('บันทึกสำเร็จ ✓','success');
+}
+
+function resetImgPreview(){
+  document.getElementById('equip-img-preview').innerHTML=`<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="1.5" style="margin:0 auto;display:block"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><p style="font-size:13px;color:#bbb;margin-top:8px">แตะเพื่อเลือกรูป</p>`;
+}
+
+// resize รูปให้เล็กลงก่อนเพื่อประหยัดเวลาอัปโหลด
+function resizeImageDataUrl(dataUrl, maxSize, quality, cb){
+  const img=new Image();
+  img.onload=()=>{
+    let w=img.width, h=img.height;
+    if(w>maxSize||h>maxSize){const r=Math.min(maxSize/w,maxSize/h);w=Math.round(w*r);h=Math.round(h*r);}
+    const c=document.createElement('canvas');c.width=w;c.height=h;
+    c.getContext('2d').drawImage(img,0,0,w,h);
+    cb(c.toDataURL('image/jpeg', quality));
+  };
+  img.src=dataUrl;
+}
+
+function previewEquipImg(input){
+  const file=input.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    resizeImageDataUrl(e.target.result, 800, 0.82, resized=>{
+      // เก็บ base64 ชั่วคราวไว้ใน hidden field เพื่อส่งไป Drive ตอน save
+      document.getElementById('equip-img-data').value=resized;
+      document.getElementById('equip-img-preview').innerHTML=
+        `<img src="${resized}" style="max-height:150px;border-radius:8px">
+         <p style="font-size:11px;color:var(--ig-muted);margin-top:4px">✓ เลือกรูปแล้ว (จะอัปโหลดเมื่อบันทึก)</p>`;
+      // ล้าง URL field
+      document.getElementById('equip-img-url').value='';
+    });
+  };
+  r.readAsDataURL(file);
+}
+
+function previewEquipImgUrl(url){
+  if(!url){resetImgPreview();document.getElementById('equip-img-data').value='';return;}
+  // URL ไม่ต้องอัปโหลด Drive — เก็บตรงเลย
+  document.getElementById('equip-img-data').value=url;
+  document.getElementById('equip-img-preview').innerHTML=
+    `<img src="${url}" style="max-height:150px;border-radius:8px" onerror="this.style.display='none'">`;
+}
+async function reloadEquip(){
+  if(!usingDemo){const res=await api('getEquipments');equipments=res.data||[];}
+  renderEquip(); renderStockReport(); checkLowStock();
+}
+
+// ===== ISSUE LIST PAGE =====
+function renderIssueList(){
+  const wrap=document.getElementById('issue-list-wrap');
+  const sorted=[...issueTransactions].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  if(!sorted.length){wrap.innerHTML=`<div class="empty-state"><div class="empty-icon">📤</div><div class="empty-text">ยังไม่มีรายการเบิก</div></div>`;return;}
+  wrap.innerHTML=`<div class="card"><div style="padding:0">${sorted.map(tx=>{
+    const total=(tx.items||[]).reduce((s,i)=>s+(i.qty||0),0);
+    const summary=(tx.items||[]).map(i=>`${i.name} ×${i.qty}`).join(', ');
+    return `<div class="tx-item">
+      <div class="tx-avatar" style="background:linear-gradient(135deg,#ffeef0,#ffd6da)">📤</div>
+      <div class="tx-info" onclick="viewDoc('issue','${tx.id}')">
+        <div class="tx-name">${tx.requester} <span style="color:var(--ig-muted);font-size:11px">${tx.dept||''}</span></div>
+        <div class="tx-sub">${tx.docNum} · ${fmtDate(tx.date)}</div>
+        <div class="tx-sub">${summary}</div>
+        <div class="tx-actions">
+          <button class="btn btn-sm btn-outline" style="padding:3px 10px" onclick="event.stopPropagation();editIssue('${tx.id}')">✏️ แก้ไข</button>
+          <button class="btn btn-sm btn-danger" style="padding:3px 10px" onclick="event.stopPropagation();deleteIssue('${tx.id}')">🗑</button>
+        </div>
+      </div>
+      <div class="tx-amount"><div class="tx-qty out">-${total}</div><div class="tx-date">ชิ้น</div></div>
+    </div>`;
+  }).join('')}</div></div>`;
+}
+
+function openCreateIssue(){
+  editingIssueId=null;
+  document.getElementById('modal-issue-title').textContent='สร้างรายการเบิก';
+  document.getElementById('issue-edit-id').value='';
+  document.getElementById('issue-doc-num').textContent=genNum('IS');
+  document.getElementById('issue-date').value=today();
+  ['issue-requester','issue-dept','issue-note'].forEach(id=>document.getElementById(id).value='');
+  issueTxItems=[]; renderIssueTxItems(); openModal('modal-create-issue');
+}
+
+function editIssue(id){
+  const tx=issueTransactions.find(t=>t.id===id);if(!tx)return;
+  editingIssueId=id;
+  document.getElementById('modal-issue-title').textContent='แก้ไขรายการเบิก';
+  document.getElementById('issue-edit-id').value=id;
+  document.getElementById('issue-doc-num').textContent=tx.docNum;
+  document.getElementById('issue-date').value=tx.date;
+  document.getElementById('issue-requester').value=tx.requester;
+  document.getElementById('issue-dept').value=tx.dept||'';
+  document.getElementById('issue-note').value=tx.note||'';
+  issueTxItems=(tx.items||[]).map(i=>({...i}));
+  renderIssueTxItems(); openModal('modal-create-issue');
+}
+
+async function deleteIssue(id){
+  if(!confirm('ลบรายการเบิกนี้?\n(สต๊อกจะถูกคืน)'))return;
+  const tx=issueTransactions.find(t=>t.id===id);
+  if(tx)(tx.items||[]).forEach(it=>{const eq=equipments.find(e=>e.code===it.code);if(eq)eq.qty+=it.qty;});
+  issueTransactions=issueTransactions.filter(t=>t.id!==id);
+  renderAll(); toast('ลบรายการเบิกแล้ว','error');
+  if(!usingDemo&&tx){
+    try{
+      await api('reverseIssue',{id,items:tx.items});
+      const[er,ir]=await Promise.all([api('getEquipments'),api('getIssues')]);
+      if(er.data)equipments=er.data; if(ir.data)issueTransactions=ir.data; renderAll();
+    }catch(e){toast('sync ไม่สำเร็จ: '+e.message,'error');}
+  }
+}
+
+function renderIssueTxItems(){
+  const el=document.getElementById('issue-items-list');
+  if(!issueTxItems.length){el.innerHTML=`<div class="empty-state" style="padding:20px"><div class="empty-sub">กดเลือกอุปกรณ์</div></div>`;return;}
+  el.innerHTML=issueTxItems.map((item,i)=>{
+    const avail=getAvailStock(item.code,editingIssueId);
+    return `<div class="checkout-item">
+      <div class="tx-avatar">${item.img?`<img src="${item.img}" alt="">`:item.qty>avail?'⚠️':'📦'}</div>
+      <div class="checkout-item-name">
+        <div style="font-weight:500;font-size:13px">${item.name}</div>
+        <div style="font-size:11px;color:var(--ig-muted)">${item.code} · ${item.unit}</div>
+        <div style="font-size:11px;color:${item.qty>avail?'var(--ig-red)':'var(--ig-blue)'}">คงเหลือ: ${avail} ${item.unit}</div>
+      </div>
+      <div class="checkout-item-qty">
+        <button class="qty-btn" onclick="adjIssue(${i},-1)">−</button>
+        <span class="qty-num" style="color:${item.qty>avail?'var(--ig-red)':''}">${item.qty}</span>
+        <button class="qty-btn" onclick="adjIssue(${i},1)">+</button>
+        <button class="qty-btn" onclick="rmIssue(${i})" style="color:var(--ig-red);border-color:var(--ig-red)">×</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function getAvailStock(code,excludeId=null){
+  const eq=equipments.find(e=>e.code===code);
+  if(!eq)return 0;
+  let base=eq.qty||0;
+  if(excludeId){const tx=issueTransactions.find(t=>t.id===excludeId);if(tx){const it=(tx.items||[]).find(i=>i.code===code);if(it)base+=it.qty;}}
+  return base;
+}
+
+function adjIssue(i,d){issueTxItems[i].qty=Math.max(1,(issueTxItems[i].qty||1)+d);renderIssueTxItems();}
+function rmIssue(i){issueTxItems.splice(i,1);renderIssueTxItems();}
+
+async function submitIssue(){
+  const date=document.getElementById('issue-date').value;
+  const requester=document.getElementById('issue-requester').value.trim();
+  const dept=document.getElementById('issue-dept').value.trim();
+  const note=document.getElementById('issue-note').value.trim();
+  const docNum=document.getElementById('issue-doc-num').textContent;
+  const editId=document.getElementById('issue-edit-id').value;
+  if(!date){toast('กรุณาเลือกวันที่','error');return;}
+  if(!requester){toast('กรุณากรอกชื่อผู้เบิก','error');return;}
+  if(!dept){toast('กรุณากรอกหน่วยงาน','error');return;}
+  if(!issueTxItems.length){toast('กรุณาเลือกอุปกรณ์','error');return;}
+  for(const item of issueTxItems){
+    const avail=getAvailStock(item.code,editId||null);
+    if(item.qty>avail){toast(`${item.name}: มีคงเหลือเพียง ${avail} ${item.unit}`,'error');return;}
+  }
+  const btn=document.getElementById('submit-issue-btn');
+  const payload={docNum,date,requester,dept,note,items:issueTxItems.map(i=>({...i}))};
+  if(editId){
+    const prev=issueTransactions.find(t=>t.id===editId);
+    if(prev)(prev.items||[]).forEach(it=>{const eq=equipments.find(e=>e.code===it.code);if(eq)eq.qty+=it.qty;});
+    issueTransactions=issueTransactions.filter(t=>t.id!==editId);
+  }
+  issueTransactions.push({...payload,id:editId||('tmp_'+Date.now())});
+  payload.items.forEach(it=>{const eq=equipments.find(e=>e.code===it.code);if(eq)eq.qty=Math.max(0,eq.qty-it.qty);});
+  renderAll(); closeModal('modal-create-issue');
+  btn.innerHTML='บันทึกการเบิก';btn.disabled=false;
+  toast('บันทึกการเบิกสำเร็จ ✓','success');
+  if(!usingDemo){
+    try{
+      const action=editId?'updateIssue':'saveIssue';
+      if(editId)payload.id=editId;
+      const res=await api(action,payload);
+      if(!res||res.success===false){toast('sync ไม่สำเร็จ: '+(res&&res.error||''),'error');return;}
+      const[er,ir]=await Promise.all([api('getEquipments'),api('getIssues')]);
+      if(er.data)equipments=er.data; if(ir.data)issueTransactions=ir.data; renderAll();
+    }catch(e){toast('sync ไม่สำเร็จ: '+e.message,'error');}
+  }
+}
+
+// ===== RECEIVE LIST PAGE =====
+function renderReceiveList(){
+  const wrap=document.getElementById('receive-list-wrap');
+  const sorted=[...receiveTransactions].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  if(!sorted.length){wrap.innerHTML=`<div class="empty-state"><div class="empty-icon">📥</div><div class="empty-text">ยังไม่มีรายการรับเข้า</div></div>`;return;}
+  wrap.innerHTML=`<div class="card"><div style="padding:0">${sorted.map(tx=>{
+    const total=(tx.items||[]).reduce((s,i)=>s+(i.qty||0),0);
+    const summary=(tx.items||[]).map(i=>`${i.name} ×${i.qty}`).join(', ');
+    return `<div class="tx-item">
+      <div class="tx-avatar" style="background:linear-gradient(135deg,#eafaf0,#c3f0d0)">📥</div>
+      <div class="tx-info" onclick="viewDoc('receive','${tx.id}')">
+        <div class="tx-name">${tx.docNum}</div>
+        <div class="tx-sub">${fmtDate(tx.date)}${tx.note?' · '+tx.note:''}</div>
+        <div class="tx-sub">${summary}</div>
+        <div class="tx-actions">
+          <button class="btn btn-sm btn-outline" style="padding:3px 10px" onclick="event.stopPropagation();editReceive('${tx.id}')">✏️ แก้ไข</button>
+          <button class="btn btn-sm btn-danger" style="padding:3px 10px" onclick="event.stopPropagation();deleteReceive('${tx.id}')">🗑</button>
+        </div>
+      </div>
+      <div class="tx-amount"><div class="tx-qty in">+${total}</div><div class="tx-date">ชิ้น</div></div>
+    </div>`;
+  }).join('')}</div></div>`;
+}
+
+function openCreateReceive(){
+  editingReceiveId=null;
+  document.getElementById('modal-receive-title').textContent='สร้างรายการรับเข้า';
+  document.getElementById('receive-edit-id').value='';
+  document.getElementById('receive-doc-num').textContent=genNum('RC');
+  document.getElementById('receive-date').value=today();
+  document.getElementById('receive-note').value='';
+  receiveTxItems=[]; renderReceiveTxItems(); openModal('modal-create-receive');
+}
+
+function editReceive(id){
+  const tx=receiveTransactions.find(t=>t.id===id);if(!tx)return;
+  editingReceiveId=id;
+  document.getElementById('modal-receive-title').textContent='แก้ไขรายการรับเข้า';
+  document.getElementById('receive-edit-id').value=id;
+  document.getElementById('receive-doc-num').textContent=tx.docNum;
+  document.getElementById('receive-date').value=tx.date;
+  document.getElementById('receive-note').value=tx.note||'';
+  receiveTxItems=(tx.items||[]).map(i=>({...i}));
+  renderReceiveTxItems(); openModal('modal-create-receive');
+}
+
+async function deleteReceive(id){
+  if(!confirm('ลบรายการรับเข้านี้?\n(สต๊อกจะถูกปรับลด)'))return;
+  const tx=receiveTransactions.find(t=>t.id===id);
+  if(tx)(tx.items||[]).forEach(it=>{const eq=equipments.find(e=>e.code===it.code);if(eq)eq.qty=Math.max(0,eq.qty-it.qty);});
+  receiveTransactions=receiveTransactions.filter(t=>t.id!==id);
+  renderAll(); toast('ลบรายการรับเข้าแล้ว','error');
+  if(!usingDemo&&tx){
+    try{
+      await api('reverseReceive',{id,items:tx.items});
+      const[er,rr]=await Promise.all([api('getEquipments'),api('getReceives')]);
+      if(er.data)equipments=er.data; if(rr.data)receiveTransactions=rr.data; renderAll();
+    }catch(e){toast('sync ไม่สำเร็จ: '+e.message,'error');}
+  }
+}
+
+function renderReceiveTxItems(){
+  const el=document.getElementById('receive-items-list');
+  if(!receiveTxItems.length){el.innerHTML=`<div class="empty-state" style="padding:20px"><div class="empty-sub">กดเลือกอุปกรณ์</div></div>`;return;}
+  el.innerHTML=receiveTxItems.map((item,i)=>`
+    <div class="checkout-item">
+      <div class="tx-avatar">${item.img?`<img src="${item.img}" alt="">`:''}</div>
+      <div class="checkout-item-name">
+        <div style="font-weight:500;font-size:13px">${item.name}</div>
+        <div style="font-size:11px;color:var(--ig-muted)">${item.code} · ${item.unit}</div>
+      </div>
+      <div class="checkout-item-qty">
+        <button class="qty-btn" onclick="adjReceive(${i},-1)">−</button>
+        <span class="qty-num">${item.qty}</span>
+        <button class="qty-btn" onclick="adjReceive(${i},1)">+</button>
+        <button class="qty-btn" onclick="rmReceive(${i})" style="color:var(--ig-red);border-color:var(--ig-red)">×</button>
+      </div>
+    </div>`).join('');
+}
+
+function adjReceive(i,d){receiveTxItems[i].qty=Math.max(1,(receiveTxItems[i].qty||1)+d);renderReceiveTxItems();}
+function rmReceive(i){receiveTxItems.splice(i,1);renderReceiveTxItems();}
+
+async function submitReceive(){
+  const date=document.getElementById('receive-date').value;
+  const note=document.getElementById('receive-note').value.trim();
+  const docNum=document.getElementById('receive-doc-num').textContent;
+  const editId=document.getElementById('receive-edit-id').value;
+  if(!date){toast('กรุณาเลือกวันที่','error');return;}
+  if(!receiveTxItems.length){toast('กรุณาเลือกอุปกรณ์','error');return;}
+  const btn=document.getElementById('submit-receive-btn');
+  const payload={docNum,date,note,items:receiveTxItems.map(i=>({...i}))};
+  if(editId){
+    const prev=receiveTransactions.find(t=>t.id===editId);
+    if(prev)(prev.items||[]).forEach(it=>{const eq=equipments.find(e=>e.code===it.code);if(eq)eq.qty=Math.max(0,eq.qty-it.qty);});
+    receiveTransactions=receiveTransactions.filter(t=>t.id!==editId);
+  }
+  receiveTransactions.push({...payload,id:editId||('tmp_'+Date.now())});
+  payload.items.forEach(it=>{const eq=equipments.find(e=>e.code===it.code);if(eq)eq.qty+=it.qty;});
+  renderAll(); closeModal('modal-create-receive');
+  btn.innerHTML='บันทึกการรับเข้า';btn.disabled=false;
+  toast('บันทึกการรับเข้าสำเร็จ ✓','success');
+  if(!usingDemo){
+    try{
+      const action=editId?'updateReceive':'saveReceive';
+      if(editId)payload.id=editId;
+      const res=await api(action,payload);
+      if(!res||res.success===false){toast('sync ไม่สำเร็จ: '+(res&&res.error||''),'error');return;}
+      const[er,rr]=await Promise.all([api('getEquipments'),api('getReceives')]);
+      if(er.data)equipments=er.data; if(rr.data)receiveTransactions=rr.data; renderAll();
+    }catch(e){toast('sync ไม่สำเร็จ: '+e.message,'error');}
+  }
+}
+
+// ===== PRODUCT PICKER =====
+function openProductPicker(target){
+  pickerTarget=target; pickerSelected={};
+  const src=target==='issue'?issueTxItems:receiveTxItems;
+  src.forEach(it=>{pickerSelected[it.code]=it.qty;});
+  document.getElementById('picker-search').value='';
+  renderPicker(''); openModal('modal-product-picker');
+}
+function renderPicker(f){
+  const list=document.getElementById('picker-list');
+  const filtered=equipments.filter(e=>e.name.toLowerCase().includes(f.toLowerCase())||e.code.toLowerCase().includes(f.toLowerCase()));
+  if(!filtered.length){list.innerHTML='<div class="empty-state" style="padding:20px"><div class="empty-sub">ไม่พบอุปกรณ์</div></div>';return;}
+  list.innerHTML=filtered.map(eq=>{
+    const sel=pickerSelected[eq.code]||0;
+    const codeEsc=eq.code.replace(/'/g,"\\'");
+    return `<div class="product-card ${sel>0?'selected':''}" id="pcard-${eq.code}" onclick="togglePickerCard('${codeEsc}')">
+      <div class="product-card-img">${eq.img?`<img src="${eq.img}" alt="">`:'<span style="font-size:22px">📦</span>'}</div>
+      <div class="product-card-info">
+        <div class="product-card-name">${eq.name}</div>
+        <div class="product-card-code">${eq.code} · คงเหลือ: ${eq.qty} ${eq.unit}</div>
+      </div>
+      <div onclick="event.stopPropagation()" style="display:flex;align-items:center;gap:4px">
+        <button class="qty-btn" onclick="adjPicker('${codeEsc}',-1)">−</button>
+        <input
+          type="number" min="0"
+          id="pinput-${eq.code}"
+          value="${sel}"
+          style="width:48px;text-align:center;border:1.5px solid var(--ig-border);border-radius:6px;padding:3px 4px;font-size:14px;font-weight:500;font-family:inherit"
+          onclick="event.stopPropagation()"
+          oninput="setPicker('${codeEsc}',this.value)"
+          onblur="cleanPicker('${codeEsc}',this)"
+        >
+        <button class="qty-btn" onclick="adjPicker('${codeEsc}',1)">+</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function _updatePickerCard(code){
+  const sel=pickerSelected[code]||0;
+  const card=document.getElementById('pcard-'+code);
+  const inp=document.getElementById('pinput-'+code);
+  if(card) card.className='product-card'+(sel>0?' selected':'');
+  if(inp && inp!==document.activeElement) inp.value=sel;
+}
+
+function togglePickerCard(c){
+  if(pickerSelected[c]) delete pickerSelected[c]; else pickerSelected[c]=1;
+  _updatePickerCard(c);
+}
+
+function adjPicker(c,d){
+  const v=Math.max(0,(pickerSelected[c]||0)+d);
+  if(v===0) delete pickerSelected[c]; else pickerSelected[c]=v;
+  _updatePickerCard(c);
+}
+
+function setPicker(c,val){
+  const v=parseInt(val)||0;
+  if(v<=0) delete pickerSelected[c]; else pickerSelected[c]=v;
+  // อัปเดต card border โดยไม่ re-render
+  const card=document.getElementById('pcard-'+c);
+  if(card) card.className='product-card'+(v>0?' selected':'');
+}
+
+function cleanPicker(c,inp){
+  // กด blur → จัดค่าให้ถูกต้อง
+  const v=Math.max(0,parseInt(inp.value)||0);
+  if(v===0) delete pickerSelected[c]; else pickerSelected[c]=v;
+  inp.value=v;
+  _updatePickerCard(c);
+}
+
+function filterPicker(v){renderPicker(v);}
+function confirmPicker(){
+  const items=Object.entries(pickerSelected).filter(([,q])=>q>0).map(([c,q])=>{const eq=equipments.find(e=>e.code===c);return eq?{code:eq.code,name:eq.name,qty:q,unit:eq.unit,img:eq.img||''}:null;}).filter(Boolean);
+  if(pickerTarget==='issue'){issueTxItems=items;renderIssueTxItems();}
+  else{receiveTxItems=items;renderReceiveTxItems();}
+  closeModal('modal-product-picker');
+}
+
+// ===== DOC DETAIL =====
+function viewDoc(type,id){
+  const tx=type==='issue'?issueTransactions.find(t=>t.id===id):receiveTransactions.find(t=>t.id===id);if(!tx)return;
+  document.getElementById('doc-detail-title').textContent=type==='issue'?`เบิก: ${tx.docNum}`:`รับเข้า: ${tx.docNum}`;
+  const total=(tx.items||[]).reduce((s,i)=>s+(i.qty||0),0);
+  document.getElementById('doc-detail-body').innerHTML=`
+    <table class="detail-table" style="margin-bottom:14px">
+      <tr><td style="color:var(--ig-muted);width:90px">เลขที่</td><td style="font-weight:600;color:var(--ig-blue)">${tx.docNum}</td></tr>
+      <tr><td style="color:var(--ig-muted)">วันที่</td><td>${fmtDate(tx.date)}</td></tr>
+      ${type==='issue'?`<tr><td style="color:var(--ig-muted)">ผู้เบิก</td><td>${tx.requester}</td></tr><tr><td style="color:var(--ig-muted)">หน่วยงาน</td><td>${tx.dept||'-'}</td></tr>`:''}
+      <tr><td style="color:var(--ig-muted)">หมายเหตุ</td><td>${tx.note||'-'}</td></tr>
+    </table>
+    <div style="font-size:12px;font-weight:600;color:var(--ig-muted);margin-bottom:10px">รายการ</div>
+    ${(tx.items||[]).map(it=>{
+      const eq=equipments.find(e=>e.code===it.code);
+      return `<div class="checkout-item">
+        <div class="tx-avatar">${eq?.img?`<img src="${eq.img}" alt="">`:type==='issue'?'📤':'📥'}</div>
+        <div style="flex:1"><div style="font-size:13px;font-weight:500">${it.name}</div><div style="font-size:11px;color:var(--ig-muted)">${it.code} · ${it.unit}</div></div>
+        <div class="tx-qty ${type==='issue'?'out':'in'}">${type==='issue'?'-':'+'}${it.qty}</div>
+      </div>`;
+    }).join('')}
+    <div style="padding-top:10px;text-align:right;font-size:13px;color:var(--ig-muted)">รวม: <strong style="font-size:16px;color:var(--ig-text)">${total}</strong> ชิ้น</div>`;
+  openModal('modal-doc-detail');
+}
+
+// ===== QR =====
+function openQR(target){qrTarget=target;openModal('modal-qr');startQR();}
+async function startQR(){
+  try{qrStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});document.getElementById('qr-video').srcObject=qrStream;}
+  catch(e){toast('ไม่สามารถเปิดกล้องได้','error');}
+}
+function closeQR(){if(qrStream){qrStream.getTracks().forEach(t=>t.stop());qrStream=null;}closeModal('modal-qr');}
+function manualQRInput(){
+  const val=document.getElementById('qr-manual-input').value.trim();if(!val)return;
+  const eq=equipments.find(e=>e.code===val);
+  if(eq){
+    const t=qrTarget||'issue', items=t==='issue'?issueTxItems:receiveTxItems;
+    if(!items.find(i=>i.code===eq.code)){items.push({code:eq.code,name:eq.name,qty:1,unit:eq.unit,img:eq.img||''});}
+    if(t==='issue')renderIssueTxItems();else renderReceiveTxItems();
+    toast(`เพิ่ม ${eq.name} แล้ว`,'success');
+  }else{toast('ไม่พบรหัสอุปกรณ์','error');}
+  document.getElementById('qr-manual-input').value='';closeQR();
+}
+
+// ===== STOCK REPORT =====
+function renderStockReport(){filterStock('all',document.querySelector('#page-stock .filter-chip'));}
+function filterStock(type,btn){
+  document.querySelectorAll('#page-stock .filter-chip').forEach(c=>c.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  let items=[...equipments];
+  if(type==='desc')items.sort((a,b)=>b.qty-a.qty);
+  else if(type==='asc')items.sort((a,b)=>a.qty-b.qty);
+  else if(type==='low')items=items.filter(e=>e.qty<=e.minQty);
+  const list=document.getElementById('stock-list');
+  if(!items.length){list.innerHTML='<div class="empty-state"><div class="empty-text">ไม่พบรายการ</div></div>';return;}
+  list.innerHTML=items.map(eq=>{
+    const isLow=eq.qty<=eq.minQty;
+    const pct=eq.minQty>0?Math.min(100,(eq.qty/(eq.minQty*3))*100):Math.min(100,eq.qty);
+    return `<div class="stock-card">
+      <div class="stock-card-img">${eq.img?`<img src="${eq.img}" alt="">`:'<span style="font-size:24px">📦</span>'}</div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px">
+          <span style="font-weight:500;font-size:14px">${eq.name}</span>
+          ${isLow?'<span class="badge badge-danger" style="font-size:10px">⚠️ ใกล้หมด</span>':''}
+        </div>
+        <div style="font-size:11px;color:var(--ig-muted);margin-bottom:5px">${eq.code}</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${isLow?'var(--ig-red)':'var(--ig-green)'}"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px">
+          <span style="color:var(--ig-muted)">ขั้นต่ำ: ${eq.minQty} ${eq.unit}</span>
+          <span style="font-weight:700;font-size:14px;color:${isLow?'var(--ig-red)':'var(--ig-text)'}">${eq.qty} ${eq.unit}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ===== REPORTS =====
+const MONTHS=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+
+function changeMonth(type,d){
+  if(type==='issue'){issueReportMonth=new Date(issueReportMonth.getFullYear(),issueReportMonth.getMonth()+d,1);renderIssueReport();}
+  else{receiveReportMonth=new Date(receiveReportMonth.getFullYear(),receiveReportMonth.getMonth()+d,1);renderReceiveReport();}
+}
+
+function renderIssueReport(){
+  const m=issueReportMonth;
+  document.getElementById('issue-report-month').textContent=`${MONTHS[m.getMonth()]} ${m.getFullYear()+543}`;
+  const filtered=issueTransactions.filter(tx=>{const d=new Date(tx.date);return d.getMonth()===m.getMonth()&&d.getFullYear()===m.getFullYear();});
+  document.getElementById('ir-times').textContent=filtered.length;
+  document.getElementById('ir-items').textContent=filtered.reduce((s,tx)=>s+(tx.items?.length||0),0);
+  document.getElementById('ir-units').textContent=filtered.reduce((s,tx)=>s+(tx.items||[]).reduce((a,i)=>a+(i.qty||0),0),0);
+  const days=new Date(m.getFullYear(),m.getMonth()+1,0).getDate();
+  const labels=Array.from({length:days},(_,i)=>i+1);
+  const data=labels.map(d=>filtered.filter(tx=>new Date(tx.date).getDate()===d).reduce((s,tx)=>s+(tx.items||[]).reduce((a,i)=>a+(i.qty||0),0),0));
+  renderChart('issue-chart',labels,data,'จำนวนเบิก','#ed4956',(c)=>issueChart=c,issueChart);
+  document.getElementById('issue-report-list').innerHTML=!filtered.length
+    ?'<div class="empty-state" style="padding:30px"><div class="empty-text">ไม่มีรายการในเดือนนี้</div></div>'
+    :filtered.sort((a,b)=>new Date(b.date)-new Date(a.date)).map(tx=>`
+      <div class="tx-item">
+        <div class="tx-avatar" style="font-size:16px">📤</div>
+        <div class="tx-info">
+          <div class="tx-name">${tx.requester||'-'} <span style="color:var(--ig-muted);font-size:11px">${tx.dept||''}</span></div>
+          <div class="tx-sub">${tx.docNum} · ${fmtDate(tx.date)}</div>
+          <div class="tx-sub">${(tx.items||[]).map(i=>`${i.name} ×${i.qty}`).join(', ')}</div>
+        </div>
+        <div class="tx-amount"><div class="tx-qty out">-${(tx.items||[]).reduce((s,i)=>s+(i.qty||0),0)}</div><div class="tx-date">ชิ้น</div></div>
+      </div>`).join('');
+}
+
+function renderReceiveReport(){
+  const m=receiveReportMonth;
+  document.getElementById('receive-report-month').textContent=`${MONTHS[m.getMonth()]} ${m.getFullYear()+543}`;
+  const filtered=receiveTransactions.filter(tx=>{const d=new Date(tx.date);return d.getMonth()===m.getMonth()&&d.getFullYear()===m.getFullYear();});
+  document.getElementById('rr-times').textContent=filtered.length;
+  document.getElementById('rr-items').textContent=filtered.reduce((s,tx)=>s+(tx.items?.length||0),0);
+  document.getElementById('rr-units').textContent=filtered.reduce((s,tx)=>s+(tx.items||[]).reduce((a,i)=>a+(i.qty||0),0),0);
+  const days=new Date(m.getFullYear(),m.getMonth()+1,0).getDate();
+  const labels=Array.from({length:days},(_,i)=>i+1);
+  const data=labels.map(d=>filtered.filter(tx=>new Date(tx.date).getDate()===d).reduce((s,tx)=>s+(tx.items||[]).reduce((a,i)=>a+(i.qty||0),0),0));
+  renderChart('receive-chart',labels,data,'จำนวนรับเข้า','#58c322',(c)=>receiveChart=c,receiveChart);
+  document.getElementById('receive-report-list').innerHTML=!filtered.length
+    ?'<div class="empty-state" style="padding:30px"><div class="empty-text">ไม่มีรายการในเดือนนี้</div></div>'
+    :filtered.sort((a,b)=>new Date(b.date)-new Date(a.date)).map(tx=>`
+      <div class="tx-item">
+        <div class="tx-avatar" style="font-size:16px">📥</div>
+        <div class="tx-info">
+          <div class="tx-name">${tx.docNum}</div>
+          <div class="tx-sub">${fmtDate(tx.date)}${tx.note?' · '+tx.note:''}</div>
+          <div class="tx-sub">${(tx.items||[]).map(i=>`${i.name} ×${i.qty}`).join(', ')}</div>
+        </div>
+        <div class="tx-amount"><div class="tx-qty in">+${(tx.items||[]).reduce((s,i)=>s+(i.qty||0),0)}</div><div class="tx-date">ชิ้น</div></div>
+      </div>`).join('');
+}
+
+function renderChart(id,labels,data,label,color,setter,prev){
+  const c=document.getElementById(id);if(!c)return;
+  if(prev)prev.destroy();
+  setter(new Chart(c,{type:'bar',data:{labels,datasets:[{label,data,backgroundColor:color+'66',borderColor:color,borderWidth:1.5,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{size:10}}},y:{grid:{color:'#f5f5f5'},ticks:{font:{size:10},stepSize:1}}}}}));
+}
+
+// ===== EXPORT =====
+function exportStock(){
+  const rows=[['รหัส','ชื่ออุปกรณ์','หน่วยนับ','คงเหลือ','ขั้นต่ำ','สถานะ']];
+  equipments.forEach(eq=>rows.push([eq.code,eq.name,eq.unit,eq.qty,eq.minQty,eq.qty<=eq.minQty?'ใกล้หมด':'ปกติ']));
+  dlCSV(rows,'stock_report.csv');
+}
+function exportIssueReport(){
+  const m=issueReportMonth;
+  const filtered=issueTransactions.filter(tx=>{const d=new Date(tx.date);return d.getMonth()===m.getMonth()&&d.getFullYear()===m.getFullYear();});
+  const rows=[['เลขที่เอกสาร','วันที่','ผู้เบิก','หน่วยงาน','รหัส','ชื่ออุปกรณ์','จำนวน','หน่วยนับ','หมายเหตุ']];
+  filtered.forEach(tx=>(tx.items||[]).forEach(it=>rows.push([tx.docNum,tx.date,tx.requester,tx.dept||'',it.code,it.name,it.qty,it.unit,tx.note||''])));
+  dlCSV(rows,`issue_${m.getFullYear()}${String(m.getMonth()+1).padStart(2,'0')}.csv`);
+}
+function exportReceiveReport(){
+  const m=receiveReportMonth;
+  const filtered=receiveTransactions.filter(tx=>{const d=new Date(tx.date);return d.getMonth()===m.getMonth()&&d.getFullYear()===m.getFullYear();});
+  const rows=[['เลขที่เอกสาร','วันที่','รหัส','ชื่ออุปกรณ์','จำนวน','หน่วยนับ','หมายเหตุ']];
+  filtered.forEach(tx=>(tx.items||[]).forEach(it=>rows.push([tx.docNum,tx.date,it.code,it.name,it.qty,it.unit,tx.note||''])));
+  dlCSV(rows,`receive_${m.getFullYear()}${String(m.getMonth()+1).padStart(2,'0')}.csv`);
+}
+function dlCSV(rows,fn){
+  const bom='\uFEFF';
+  const csv=bom+rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download=fn; a.click(); toast('ดาวน์โหลดแล้ว ✓','success');
+}
+
+// ===== LOW STOCK =====
+function checkLowStock(){
+  const low=equipments.filter(e=>e.qty<=e.minQty);
+  const b=document.getElementById('alert-badge');
+  b.style.display=low.length?'flex':'none';
+  if(low.length)b.textContent=low.length;
+}
+function showLowStockAlert(){
+  const low=equipments.filter(e=>e.qty<=e.minQty);
+  if(!low.length){toast('ไม่มีอุปกรณ์ใกล้หมด 🎉','success');return;}
+  alert(`⚠️ อุปกรณ์ใกล้หมด ${low.length} รายการ:\n`+low.map(e=>`• ${e.name}: ${e.qty} ${e.unit} (ขั้นต่ำ ${e.minQty})`).join('\n'));
+}
+
+// ===== NAV =====
+function navigate(tab,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById(`page-${tab}`).classList.add('active');
+  btn.classList.add('active'); window.scrollTo(0,0);
+}
+function goReport(tab){
+  closeModal('modal-reports-tab');
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById(`page-${tab}`).classList.add('active');
+  document.querySelectorAll('.nav-item')[4].classList.add('active');
+}
+
+// ===== MODAL =====
+function openModal(id){document.getElementById(id).classList.remove('hidden');}
+function closeModal(id){document.getElementById(id).classList.add('hidden');}
+document.querySelectorAll('.modal-overlay').forEach(m=>{
+  m.addEventListener('click',e=>{if(e.target===m){m.classList.add('hidden');if(m.id==='modal-qr')closeQR();}});
+});
+
+// ===== TOAST =====
+function toast(msg,type=''){
+  const c=document.getElementById('toast-container');
+  const t=document.createElement('div');
+  t.className=`toast ${type}`; t.textContent=msg;
+  c.appendChild(t); setTimeout(()=>t.remove(),2800);
+}
+
+// ===== HELPERS =====
+function genNum(prefix){
+  const now=new Date();
+  const yy=String(now.getFullYear()).slice(-2);
+  const mm=String(now.getMonth()+1).padStart(2,'0');
+  const dd=String(now.getDate()).padStart(2,'0');
+  const src=prefix==='IS'?issueTransactions:receiveTransactions;
+  const key=`${prefix}-${yy}${mm}${dd}`;
+  const cnt=src.filter(r=>r.docNum.startsWith(key)).length;
+  return `${key}-${String(cnt+1).padStart(3,'0')}`;
+}
+function fmtDate(s){
+  if(!s)return'-';
+  const d=new Date(s+'T00:00:00');
+  return `${d.getDate()} ${MONTHS[d.getMonth()].slice(0,3)} ${d.getFullYear()+543}`;
+}
+
+// ===== START =====
+init();
+</script>
+</body>
+</html>
